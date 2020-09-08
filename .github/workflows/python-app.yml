@@ -23,7 +23,6 @@ jobs:
         channel-priority: strict
     - name: Install dependencies
       run: |
-        # python -m pip install --upgrade pip
         conda install numpy gdal>=3.0.0 pytest flake8
     - name: Lint with flake8
       run: |
