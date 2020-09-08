@@ -833,6 +833,9 @@ def proj_osr(input_proj):
     """
     input_osr = osr.SpatialReference()
     input_osr.ImportFromWkt(input_proj)
+    if int(gdal.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        input_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return input_osr
 
 
@@ -851,6 +854,9 @@ def epsg_osr(input_epsg):
     """
     input_osr = osr.SpatialReference()
     input_osr.ImportFromEPSG(input_epsg)
+    if int(gdal.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        input_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return input_osr
 
 
@@ -886,6 +892,9 @@ def proj4_osr(input_proj4):
     """
     input_osr = osr.SpatialReference()
     input_osr.ImportFromProj4(input_proj4)
+    if int(gdal.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        input_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return input_osr
 
 
