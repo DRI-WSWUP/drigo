@@ -242,8 +242,10 @@ class env:
     #     self.snap_extent = raster_ds_extent(snap_ds)
     #     self.snap_proj = snap_ds.GetProjection()
     #     self.snap_osr = osr.SpatialReference()
+    #     # self.snap_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     #     self.snap_osr.ImportFromWkt(self.snap_proj)
     #     self.snap_gcs_osr = self.snap_osr.CloneGeogCS()
+    #     # self.snap_gcs_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     #     self.snap_gcs_proj = self.snap_gcs_osr.ExportToWkt()
     #     self.cellsize = geo_cellsize(self.snap_geo, x_only=True)
     #     self.snap_x, self.snap_y = geo_origin(self.snap_geo)
@@ -833,6 +835,9 @@ def proj_osr(input_proj):
     """
     input_osr = osr.SpatialReference()
     input_osr.ImportFromWkt(input_proj)
+    if int(gdal.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        input_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return input_osr
 
 
@@ -851,6 +856,9 @@ def epsg_osr(input_epsg):
     """
     input_osr = osr.SpatialReference()
     input_osr.ImportFromEPSG(input_epsg)
+    if int(gdal.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        input_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return input_osr
 
 
@@ -886,6 +894,9 @@ def proj4_osr(input_proj4):
     """
     input_osr = osr.SpatialReference()
     input_osr.ImportFromProj4(input_proj4)
+    if int(gdal.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        input_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return input_osr
 
 
@@ -1735,9 +1746,9 @@ def project_extent(input_extent, input_osr, output_osr, cellsize=None):
         if cellsize is None:
             steps = 1000
         else:
-            steps = float(max(
+            steps = int(float(max(
                 abs(point_b[0] - point_a[0]),
-                abs(point_b[1] - point_a[1]))) / cellsize
+                abs(point_b[1] - point_a[1]))) / cellsize)
         # steps = float(abs(point_b[0] - point_a[0])) / cellsize
         for x, y in zip(np.linspace(point_a[0], point_b[0], steps + 1),
                         np.linspace(point_a[1], point_b[1], steps + 1)):
@@ -3645,6 +3656,7 @@ def array_lat_lon_func(input_osr, input_cs, input_extent, gcs_cs=0.005,
     # GCS cellsize is in decimal degrees
     # Get the GCS from the input project/spatial reference
     gcs_osr = input_osr.CloneGeogCS()
+    gcs_osr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     gcs_extent = project_extent(input_extent, input_osr, gcs_osr, input_cs)
     # Buffer extent by 4 "cells" then adjust to snap
     gcs_extent.buffer_extent(4 * gcs_cs)
