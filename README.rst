@@ -19,9 +19,9 @@ Dependencies
  * `gdal <http://www.gdal.org>`__
  * `numpy <https://www.numpy.org>`__
 
-.. |build| image:: https://travis-ci.org/WSWUP/drigo.svg?branch=master
+.. |build| image:: https://github.com/WSWUP/drigo/workflows/Python%20application/badge.svg
    :alt: Build status
-   :target: https://travis-ci.org/WSWUP/drigo
+   :target: https://github.com/WSWUP/drigo
 .. |version| image:: https://badge.fury.io/py/drigo.svg
    :alt: Latest version on PyPI
    :target: https://badge.fury.io/py/drigo
